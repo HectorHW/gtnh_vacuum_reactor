@@ -766,29 +766,32 @@ local function tick_reactors(lsc, reactors, tick)
     end
 end
 
+
+--- look for the first occurence of given string pattern in a list (case-insensitive)
+--- @param values string[]
+--- @param pattern string
+--- @return string | nil
+local function grep_strings(values, pattern)
+    for _, line in pairs(values) do
+        if string.find(string.lower(line), pattern) ~= nil then
+            return line
+        end
+    end
+end
+
 --- check if provided sensor reading indicates that machine needs maintenenance
 --- @param sensor_info string[]
 --- @return boolean
 local function get_needs_maintenance_status(sensor_info)
-    -- proxy does not seem to provide separate method to get maintenenance status so we will have to check it the old way
-    for _, line in pairs(sensor_info) do
-        -- I am not so sure about the case now so lets ignore it
-        if string.find(string.lower(line), "has problems") ~= nil then
-            return true
-        end
-    end
-    return false
+    return grep_strings(sensor_info, "has problems") ~= nil
 end
 
 --- find passive loss value from sensor reading, if any
 --- @param sensor_info string[]
 --- @return number | nil
 local function get_passive_loss(sensor_info)
-    for _, line in pairs(sensor_info) do
-        if string.find(string.lower(line), "passive loss") ~= nil then
-            return parse_fuzzy_int(line)
-        end
-    end
+    local reading = grep_strings(sensor_info, "passive loss")
+    return (reading and parse_fuzzy_int(reading))
 end
 
 local function update_lsc_readings(lsc)
