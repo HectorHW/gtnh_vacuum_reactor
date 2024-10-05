@@ -821,6 +821,7 @@ end
 --- @param sensor_info string[]
 --- @return boolean
 local function get_needs_maintenance_status(sensor_info)
+    -- TODO: play for a while and make sure that it still uses this exact text
     return grep_strings(sensor_info, "has problems") ~= nil
 end
 
