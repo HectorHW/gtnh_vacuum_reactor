@@ -763,6 +763,18 @@ local function tick_reactors(lsc, reactors, tick)
     end
 end
 
+local function get_needs_maintenance_status(gt_proxy)
+    -- proxy does not seem to provide separate method to get maintenenance status so we will have to check it the old way
+    local sensor_info = gt_proxy.getSensorInformation()
+    for _, line in pairs(sensor_info) do
+        -- I am not so sure about the case now so lets ignore it
+        if string.find(string.lower(line), "has problems") ~= nil then
+            return true
+        end
+    end
+    return false
+end
+
 local function update_lsc_readings(lsc)
     local sensor_info = lsc.controller.getSensorInformation()
     lsc.status = {
@@ -771,7 +783,7 @@ local function update_lsc_readings(lsc)
         passive_loss_eut = parse_fuzzy_int(sensor_info[4]),
         avg_input_eut = parse_fuzzy_int(string.gsub(sensor_info[7], "(last 5 seconds)", "")),
         avg_output_eut = parse_fuzzy_int(string.gsub(sensor_info[8], "(last 5 seconds)", "")),
-        needs_maintenance = (string.find(sensor_info[9], "Has Problems") ~= nil)
+        needs_maintenance = get_needs_maintenance_status(lsc.controller)
     }
 
     if lsc.needs_powergen == nil then
