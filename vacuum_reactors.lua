@@ -776,14 +776,15 @@ local function get_needs_maintenance_status(gt_proxy)
 end
 
 local function update_lsc_readings(lsc)
-    local sensor_info = lsc.controller.getSensorInformation()
+    local controller = lsc.controller
+    local sensor_info = controller.getSensorInformation()
     lsc.status = {
-        used_capacity_eu = parse_fuzzy_int(sensor_info[2]),
-        total_capacity_eu = parse_fuzzy_int(sensor_info[3]),
+        used_capacity_eu = controller.getEUStored(),
+        total_capacity_eu = controller.getEUCapacity(),
         passive_loss_eut = parse_fuzzy_int(sensor_info[4]),
-        avg_input_eut = parse_fuzzy_int(string.gsub(sensor_info[7], "(last 5 seconds)", "")),
-        avg_output_eut = parse_fuzzy_int(string.gsub(sensor_info[8], "(last 5 seconds)", "")),
-        needs_maintenance = get_needs_maintenance_status(lsc.controller)
+        avg_input_eut = controller.getAverageElectricInput(),
+        avg_output_eut = controller.getAverageElectricOutput(),
+        needs_maintenance = get_needs_maintenance_status(controller)
     }
 
     if lsc.needs_powergen == nil then
