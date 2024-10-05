@@ -1,5 +1,3 @@
-Found gt_machine: multimachine.supercapacitor
-Found LSC: ca097065-9a16-4d03-98e5-573371474db6
 §eOperational Data:§r
 EU Stored: 72,071,950EU
 EU Stored: 7.21x10^7EU
