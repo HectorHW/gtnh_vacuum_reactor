@@ -344,6 +344,9 @@ local function try_replace_one_fuel_rod(reactor, reactor_items)
     return nil
 end
 
+--- extract number from a string by erasing non-digits
+--- @param str string
+--- @return number
 local function parse_fuzzy_int(str)
     local filtered_str = string.gsub(str, "([^0-9]+)", "")
     return math.floor(tonumber(filtered_str))
@@ -763,6 +766,9 @@ local function tick_reactors(lsc, reactors, tick)
     end
 end
 
+--- check if provided sensor reading indicates that machine needs maintenenance
+--- @param sensor_info string[]
+--- @return boolean
 local function get_needs_maintenance_status(sensor_info)
     -- proxy does not seem to provide separate method to get maintenenance status so we will have to check it the old way
     for _, line in pairs(sensor_info) do
