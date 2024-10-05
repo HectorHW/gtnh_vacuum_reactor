@@ -1,0 +1,22 @@
+Found gt_machine: multimachine.supercapacitor
+Found LSC: ca097065-9a16-4d03-98e5-573371474db6
+§eOperational Data:§r
+EU Stored: 72,071,950EU
+EU Stored: 7.21x10^7EU
+Used Capacity: 8.01%
+Total Capacity: 900,000,000EU
+Total Capacity: 9.00x10^8EU
+Passive Loss: 5EU/t
+EU IN: 0EU/t
+EU OUT: 0EU/t
+Avg EU IN: 0 (last 5 seconds)
+Avg EU OUT: 0 (last 5 seconds)
+Maintenance Status: §aWorking perfectly§r
+Wireless mode: §cdisabled§r
+§4UHV§r Capacitors detected: 0
+§5UEV§r Capacitors detected: 0
+§1§lUIV§r Capacitors detected: 0
+§c§l§nUMV§r Capacitors detected: 0
+Total wireless EU: §c0
+Total wireless EU: §c0
+---------------------------------------------
