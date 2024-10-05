@@ -766,7 +766,6 @@ local function tick_reactors(lsc, reactors, tick)
     end
 end
 
-
 --- look for the first occurence of given string pattern in a list (case-insensitive)
 --- @param values string[]
 --- @param pattern string
@@ -779,6 +778,45 @@ local function grep_strings(values, pattern)
     end
 end
 
+--- look for the line matching given pattern and extract number from it
+--- @param values string[]
+--- @param pattern string
+--- @return number | nil
+local function grep_num_by_description(values, pattern)
+    local reading = grep_strings(values, pattern)
+    return reading and parse_fuzzy_int(reading)
+end
+
+--- find passive loss value from sensor reading, if any
+--- @param sensor_info string[]
+--- @return number | nil
+local function get_passive_loss(sensor_info)
+    return grep_num_by_description(sensor_info, "passive loss")
+end
+
+--- remove `(last 5 seconds)` from given string, do nothing for nil
+--- @param value string | nil
+--- @return string | nil
+local function strip_duration_suffix(value)
+    return value and string.gsub(value, "(last 5 seconds)", "")
+end
+
+--- look for average eu input in sensor reading
+--- @param sensor_info string[]
+--- @return number | nil
+local function get_average_eu_input(sensor_info)
+    local reading = strip_duration_suffix(grep_strings(sensor_info, "avg eu in"))
+    return reading and parse_fuzzy_int(reading)
+end
+
+--- look for average eu output in sensor reading
+--- @param sensor_info string[]
+--- @return number | nil
+local function get_average_eu_output(sensor_info)
+    local reading = strip_duration_suffix(grep_strings(sensor_info, "avg eu out"))
+    return reading and parse_fuzzy_int(reading)
+end
+
 --- check if provided sensor reading indicates that machine needs maintenenance
 --- @param sensor_info string[]
 --- @return boolean
@@ -786,13 +824,6 @@ local function get_needs_maintenance_status(sensor_info)
     return grep_strings(sensor_info, "has problems") ~= nil
 end
 
---- find passive loss value from sensor reading, if any
---- @param sensor_info string[]
---- @return number | nil
-local function get_passive_loss(sensor_info)
-    local reading = grep_strings(sensor_info, "passive loss")
-    return (reading and parse_fuzzy_int(reading))
-end
 
 local function update_lsc_readings(lsc)
     local controller = lsc.controller
@@ -801,8 +832,9 @@ local function update_lsc_readings(lsc)
         used_capacity_eu = controller.getEUStored(),
         total_capacity_eu = controller.getEUCapacity(),
         passive_loss_eut = get_passive_loss(sensor_info) or 0,
-        avg_input_eut = controller.getAverageElectricInput(),
-        avg_output_eut = controller.getAverageElectricOutput(),
+        -- despite controller providing methods to get avg io we use manual search here because it averages over longer period
+        avg_input_eut = get_average_eu_input(sensor_info) or 0,
+        avg_output_eut = get_average_eu_output(sensor_info) or 0,
         needs_maintenance = get_needs_maintenance_status(sensor_info)
     }
 
