@@ -831,7 +831,7 @@ local function update_lsc_readings(lsc)
     local sensor_info = controller.getSensorInformation()
     lsc.status = {
         used_capacity_eu = controller.getEUStored(),
-        total_capacity_eu = controller.getEUCapacity(),
+        total_capacity_eu = controller.getEUMaxStored(),
         passive_loss_eut = get_passive_loss(sensor_info) or 0,
         -- despite controller providing methods to get avg io we use manual search here because it averages over longer period
         avg_input_eut = get_average_eu_input(sensor_info) or 0,
